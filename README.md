@@ -1,10 +1,40 @@
-# Astro Starter Kit: Basics
+# Dixply Website
+
+Astro static site with a Cloudflare Pages Function for the Brevo contact form.
+
+## Local development
 
 ```sh
-npm create astro@latest -- --template basics
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Use `npm run dev` for the static Astro site. To test the contact endpoint and static output together, build and run it through Cloudflare Pages tooling:
+
+```sh
+npm run pages:dev
+```
+
+Create `.dev.vars` in the project root with this placeholder replaced by the real key, then start the local Pages server:
+
+```text
+BREVO_API_KEY=your_brevo_api_key
+```
+
+Do not commit `.dev.vars`. Wrangler loads it only for local Pages Functions. Never add the key to `PUBLIC_*` variables, Astro source, generated files, or Git.
+
+## Cloudflare deployment
+
+In Cloudflare Pages, configure the project with:
+
+- Framework preset: `Astro`
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Node.js version: `22.23.4` or newer
+
+Add `BREVO_API_KEY` as a Secret in the Pages project's Settings > Environment variables for the environments that should accept inquiries. The sender `hello@dixply.com` must be authenticated in Brevo and belong to the configured sending domain. DNS changes are handled separately.
+
+The contact endpoint is available at `/api/contact` and runs from `functions/api/contact.ts`.
 
 ## 🚀 Project Structure
 

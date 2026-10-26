@@ -1,0 +1,29 @@
+---
+import Brand from '../components/Brand.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Layout from '../layouts/Layout.astro';
+
+const faqs = [
+	{ question: 'What kinds of businesses do you work with?', answer: 'Dixply works with small businesses, independent professionals, and local service companies. The right scope depends on your needs, tools, and goals.' },
+	{ question: 'Can you help improve a website I already have?', answer: 'Yes. Work can include maintenance, technical SEO, integrations, performance improvements, or a review of an existing site. We will first understand the current setup.' },
+	{ question: 'Do you build custom software and automations?', answer: 'Yes. Projects may include web applications, custom software, n8n workflows, API connections, and WhatsApp AI agents. We define the scope together before implementation.' },
+	{ question: 'How long does a project take?', answer: 'Timing depends on scope, requirements, and the systems involved. After an initial conversation, we can outline the work and a realistic schedule.' },
+	{ question: 'Is the inquiry form available yet?', answer: 'Not yet. The form on the homepage is a preview and does not accept or send information. For now, email hello@dixply.com to start a conversation.' },
+];
+---
+
+<Layout title="FAQ — Dixply" description="Answers to common questions about Dixply's web development, automation, infrastructure, and technical services for small businesses.">
+	<header class="faq-header bg-navy text-white">
+		<div class="site-shell flex h-20 items-center justify-between">
+			<Brand href="/#home" />
+			<a class="text-link text-link-light" href="/">← Back to Home</a>
+		</div>
+	</header>
+	<main class="section-space bg-white">
+		<div class="site-shell faq-layout grid gap-12 lg:grid-cols-[.75fr_1.25fr]">
+			<div><p class="eyebrow"><span class="eyebrow-mark"></span> Frequently asked questions</p><h1 class="faq-title">Questions,<br />answered.</h1><p class="faq-aside">Have a different question? <a href="mailto:hello@dixply.com">Send us a note ↗</a></p></div>
+			<div class="faq-list">{faqs.map((faq) => <details class="faq-item"><summary>{faq.question}<span aria-hidden="true"></span></summary><p>{faq.answer}</p></details>)}</div>
+		</div>
+	</main>
+	<footer class="site-footer"><div class="site-shell footer-main"><div><Brand href="/#home" /><p>Technology for business, built with care.</p></div><div class="footer-links"><a href="/#services">Services</a><a href="/#work">Portfolio</a><a href="/#about">About</a><a href="/#contact">Contact</a><a href="/faq/">FAQ</a><a href="mailto:hello@dixply.com">hello@dixply.com</a></div><SocialLinks /></div><div class="site-shell footer-bottom"><span>© {new Date().getFullYear()} Dixply</span><span>Independent technology services · dixply.com</span></div></footer>
+</Layout>

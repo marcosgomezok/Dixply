@@ -1,0 +1,11 @@
+---
+interface Props {
+	href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a class="brand-link" href={href} aria-label="Dixply home">
+	<img class="brand-logo" src="/dixply.png" alt="" width="152" height="44" />
+</a>

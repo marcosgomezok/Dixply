@@ -1,11 +1,266 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import Brand from '../components/Brand.astro';
+import ServiceIcon from '../components/ServiceIcon.astro';
+import SocialLinks from '../components/SocialLinks.astro';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const services = [
+	{ icon: 'web', title: 'Web & Software Development', description: 'Digital products built around how your business works.', tags: ['Business website design & development', 'Landing pages', 'Web applications', 'Custom software', 'Website maintenance & updates'] },
+	{ icon: 'automation', title: 'Automation & AI', description: 'Connected tools and workflows that simplify repetitive work.', tags: ['n8n workflow automation', 'WhatsApp AI agents', 'API integrations', 'Third-party app integrations', 'Business & administrative process automation'] },
+	{ icon: 'infrastructure', title: 'Hosting & Infrastructure', description: 'Practical setup and support for the systems your business relies on.', tags: ['Hosting & domain setup', 'Website & app deployment', 'VPS configuration', 'Technical service installation & maintenance', 'Infrastructure migration & configuration'] },
+	{ icon: 'security', title: 'Security & Quality Assurance', description: 'Technical reviews and testing to help prepare your systems for release.', tags: ['Web application security reviews', 'Authentication, authorization & validation reviews', 'Functional & regression testing', 'Manual QA', 'Bug reports & pre-launch checks'] },
+	{ icon: 'consulting', title: 'SEO & IT Consulting', description: 'Technical guidance to improve your website and make informed technology decisions.', tags: ['Technical SEO', 'On-page SEO optimization', 'Indexation diagnostics', 'Technology consulting', 'Systems, tools & integration evaluation'] },
+];
+
+const orbitServices = services.flatMap((service) => service.tags);
+
+const projects = [
+	{ name: 'BrightNest Cleaning', category: 'Residential & commercial cleaning', description: 'A service-led website concept designed to make cleaning options clear and quote requests easy to find.', initials: 'BN', tone: 'mint', type: 'Local services' },
+	{ name: 'Form & Flow Studio', category: 'Fitness & movement studio', description: 'A welcoming concept for presenting classes, sample schedules, and ways to ask about membership.', initials: 'F&F', tone: 'sand', type: 'Fitness' },
+	{ name: 'Atelier North', category: 'Interior design studio', description: 'A visual portfolio concept for sharing selected interiors, project stories, and inquiry details.', initials: 'AN', tone: 'clay', type: 'Interior design' },
+];
+
 ---
 
 <Layout>
-	<Welcome />
+	<header class="absolute inset-x-0 top-0 z-10">
+		<div class="site-shell flex h-20 items-center justify-between">
+			<Brand href="#home" />
+			<div class="header-actions">
+				<nav class="hidden items-center gap-8 md:flex" aria-label="Main navigation">
+					<a class="nav-link" href="#services">Services</a>
+					<a class="nav-link" href="#work">Portfolio</a>
+					<a class="nav-link" href="#about">About</a>
+					<a class="nav-link" href="#contact">Contact</a>
+				</nav>
+				<a class="button button-light" href="mailto:hello@dixply.com">Let’s talk</a>
+			</div>
+		</div>
+	</header>
+
+	<main>
+		<section class="hero-section relative overflow-hidden bg-navy text-white" id="home">
+			<div class="hero-grid" aria-hidden="true"></div>
+			<div class="site-shell hero-content relative grid items-center gap-16 lg:grid-cols-[1.15fr_.85fr]">
+				<div class="max-w-2xl">
+					<h1>Make technology<br class="hidden sm:block" /> work for <span class="text-blue-300">your business.</span></h1>
+					<p class="hero-copy">We build useful digital tools, connect the systems you rely on, and make the technical side of business easier to manage.</p>
+					<div class="mt-9 flex flex-wrap items-center gap-5">
+						<a class="button button-blue" href="mailto:hello@dixply.com">Talk about your project <span aria-hidden="true">↗</span></a>
+						<a class="text-link text-link-light" href="#services">Explore what we do <span aria-hidden="true">↓</span></a>
+					</div>
+
+				</div>
+				<div class="hero-visual" data-services={JSON.stringify(orbitServices)} aria-hidden="true">
+					<div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+					<div class="orbit-track">
+						<span class="orbit-particle particle-top"></span><span class="orbit-particle particle-right"></span><span class="orbit-particle particle-left"></span>
+						<div class="node-position node-top"><div class="visual-node" data-service-node><span class="node-label">{orbitServices[0]}</span></div></div>
+						<div class="node-position node-right"><div class="visual-node" data-service-node><span class="node-label">{orbitServices[1]}</span></div></div>
+						<div class="node-position node-left"><div class="visual-node" data-service-node><span class="node-label">{orbitServices[2]}</span></div></div>
+					</div>
+					<div class="visual-core"><span class="core-ring"></span><img class="core-logo" src="/dixply-dyson.png" alt="" width="48" height="48" loading="eager" /><span class="core-center-light"></span></div>
+				</div>
+			</div>
+			
+		</section>
+
+		<section class="section-space bg-white" id="services">
+			<div class="site-shell">
+				<div class="section-heading grid gap-6 md:grid-cols-[.85fr_1.15fr] md:items-end">
+					<div><p class="eyebrow"><span class="eyebrow-mark"></span> What we do</p><h2>Technology that<br class="hidden sm:block" /> moves work forward.</h2></div>
+					<p class="section-intro">From a first business website to the systems behind your daily operations, get practical technical support shaped around your business.</p>
+				</div>
+				<div class="service-list">
+					{services.map((service) => (
+						<article class="service-row">
+							<div class="service-main"><ServiceIcon name={service.icon as 'web' | 'automation' | 'infrastructure' | 'security' | 'consulting'} /><div><h3>{service.title}</h3><p>{service.description}</p></div></div>
+							<ul class="service-tags" aria-label={`${service.title} includes`}>
+								{service.tags.map((tag) => <li>{tag}</li>)}
+							</ul>
+							<a class="service-arrow" href="mailto:hello@dixply.com" aria-label={`Ask about ${service.title}`}>↗</a>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="section-space section-soft" id="about">
+			<div class="site-shell">
+				<div class="section-heading grid gap-6 md:grid-cols-[.85fr_1.15fr] md:items-end">
+					<div><p class="eyebrow"><span class="eyebrow-mark"></span> About Dixply</p><h2>Technology built around<br />what matters.</h2></div>
+					<p class="section-intro">We pair thoughtful security practices with focused delivery and budget-conscious decisions, so each solution fits your business from the start.</p>
+				</div>
+				<div class="benefit-grid grid gap-4 md:grid-cols-3">
+					<article class="benefit-card"><div class="benefit-heading"><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 19 6v5c0 4.7-2.9 8-7 10-4.1-2-7-5.3-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><h3>Security You Can Trust</h3></div><p>We build security into every stage of development, applying best practices to protect your data, reduce vulnerabilities, and keep your systems secure from the ground up.</p></article>
+					<article class="benefit-card"><div class="benefit-heading"><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13.2 2.8 5.8 13h5.4l-.6 8.2L18.2 11h-5.4l.4-8.2Z"/></svg></span><h3>From Idea to Launch, Faster</h3></div><p>We focus on efficient development, clear priorities, and streamlined workflows to deliver practical solutions faster—without cutting corners on quality.</p></article>
+					<article class="benefit-card"><div class="benefit-heading"><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9"/><path d="M15 8.8c-.6-.7-1.5-1.1-2.8-1.1-1.5 0-2.5.7-2.5 1.8 0 2.9 5.8 1.2 5.8 4.5 0 1.3-1.2 2.3-3 2.3-1.3 0-2.5-.5-3.2-1.4M12 5.8v12.4"/></svg></span><h3>Cut Costs, Not Corners</h3></div><p>We build cost-effective software and automation solutions that help reduce unnecessary expenses without compromising on quality, security, or performance.</p></article>
+				</div>
+			</div>
+		</section>
+
+		<section class="section-space bg-white" id="work">
+			<div class="site-shell">
+				<div class="section-heading portfolio-heading flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+					<div><p class="eyebrow"><span class="eyebrow-mark"></span> Concept work</p><h2>Ideas, brought to life.</h2></div>
+				</div>
+				<div class="project-grid grid gap-5 lg:grid-cols-3">
+					{projects.map((project) => (
+						<article class="project-card">
+							<div class={`project-art project-${project.tone}`} aria-hidden="true">
+								<div class="project-window"><div class="window-top"><span></span><span></span><span></span><i>{project.type}</i></div><div class="window-content"><div class="window-copy"><b>{project.initials}</b><span></span><span></span><small></small></div><div class="window-shape"><span>{project.initials}</span></div></div></div>
+								<div class="concept-stamp">Concept<br />project</div>
+							</div>
+							<div class="project-info"><div class="project-title-line"><div><p class="project-category">{project.category}</p><h3>{project.name}</h3></div><span class="project-mark" aria-hidden="true">↗</span></div><p>{project.description}</p></div>
+						</article>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<section class="contact-section bg-navy text-white" id="contact">
+			<div class="site-shell contact-layout grid gap-12 lg:grid-cols-[1fr_.78fr] lg:items-center">
+				<div><p class="eyebrow eyebrow-light"><span class="eyebrow-mark"></span> Contact</p><h2>Have a project<br />in mind?</h2><p class="contact-copy">Tell us what you are trying to improve. We’ll take it from there, one clear step at a time.</p><a class="button button-blue" href="mailto:hello@dixply.com">Email hello@dixply.com <span aria-hidden="true">↗</span></a></div>
+				<form class="contact-form" id="contact-form" novalidate>
+					<div class="form-heading"><span>Project inquiry</span><span class="form-status"><i></i> Send a request</span></div>
+					<div class="form-grid">
+						<div class="form-field"><label for="contact-name">Name <span aria-hidden="true">*</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="contact-name-error" /><p class="field-error" id="contact-name-error"></p></div>
+						<div class="form-field"><label for="contact-email">Work email <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="contact-email-error" /><p class="field-error" id="contact-email-error"></p></div>
+						<div class="form-field form-field-full"><label for="contact-details">Project details <span aria-hidden="true">*</span></label><textarea id="contact-details" name="details" rows="4" maxlength="3000" required aria-describedby="contact-details-error contact-details-count"></textarea><div class="field-meta"><p class="field-error" id="contact-details-error"></p><span id="contact-details-count">0 / 3000</span></div></div>
+					</div>
+					<div class="honeypot" aria-hidden="true"><label for="contact-website">Website</label><input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off" /></div>
+					<div class="form-feedback" id="contact-feedback" role="status" aria-live="polite"></div>
+					<button class="contact-submit button button-blue" type="submit"><span class="submit-label">Send project inquiry</span><span class="submit-icon" aria-hidden="true">↗</span></button>
+				</form>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="site-shell footer-main"><div><Brand href="#home" /><p>Technology for business, built with care.</p></div><div class="footer-links"><a href="#home">Home</a><a href="#services">Services</a><a href="#work">Portfolio</a><a href="#about">About</a><a href="#contact">Contact</a><a href="/faq/">FAQ</a><a href="mailto:hello@dixply.com">hello@dixply.com</a></div><SocialLinks /></div>
+		<div class="site-shell footer-bottom"><span>© {new Date().getFullYear()} Dixply</span><span>Independent technology services · dixply.com</span></div>
+	</footer>
 </Layout>
+
+<script>
+	const serviceOrbit = document.querySelector<HTMLElement>('.hero-visual[data-services]');
+
+	if (serviceOrbit && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		const labels = JSON.parse(serviceOrbit.dataset.services ?? '[]') as string[];
+		const nodes = Array.from(serviceOrbit.querySelectorAll<HTMLElement>('[data-service-node]'));
+		let nextIndex = nodes.length;
+
+		window.setInterval(() => {
+			const batchStart = nextIndex;
+			nodes.forEach((node, nodeIndex) => {
+				window.setTimeout(() => {
+					node.classList.add('is-changing');
+					window.setTimeout(() => {
+						const label = node.querySelector<HTMLElement>('.node-label');
+						if (label) label.textContent = labels[(batchStart + nodeIndex) % labels.length];
+						node.classList.remove('is-changing');
+					}, 260);
+				}, nodeIndex * 280);
+			});
+			nextIndex = (nextIndex + nodes.length) % labels.length;
+		}, 3600);
+	}
+	const contactForm = document.querySelector<HTMLFormElement>('#contact-form');
+
+	if (contactForm) {
+		const submitButton = contactForm.querySelector<HTMLButtonElement>('button[type="submit"]');
+		const submitLabel = contactForm.querySelector<HTMLElement>('.submit-label');
+		const feedback = contactForm.querySelector<HTMLElement>('#contact-feedback');
+		const details = contactForm.querySelector<HTMLTextAreaElement>('#contact-details');
+		const detailsCount = contactForm.querySelector<HTMLElement>('#contact-details-count');
+		let submitting = false;
+
+		const errorFor = (name: string) => contactForm.querySelector<HTMLElement>(`#contact-${name}-error`);
+		const fieldFor = (name: string) => contactForm.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+
+		const clearFieldError = (name: string) => {
+			const field = fieldFor(name);
+			const error = errorFor(name);
+			if (field) field.removeAttribute('aria-invalid');
+			if (error) error.textContent = '';
+		};
+
+		const showFieldError = (name: string, message: string) => {
+			const field = fieldFor(name);
+			const error = errorFor(name);
+			if (field) field.setAttribute('aria-invalid', 'true');
+			if (error) error.textContent = message;
+		};
+
+		const validateField = (name: string) => {
+			const field = fieldFor(name);
+			if (!field || !(field instanceof HTMLInputElement || field instanceof HTMLSelectElement || field instanceof HTMLTextAreaElement)) return true;
+
+			let message = '';
+			if (!field.validity.valid) {
+				if (field.validity.valueMissing) message = name === 'details' ? 'Tell us a little about your project.' : name === 'email' ? 'Enter your work email.' : 'Enter your name.';
+				else if (field.validity.typeMismatch) message = 'Enter a valid email address.';
+				else if (field.validity.tooLong && !(field instanceof HTMLSelectElement)) message = `Use ${field.maxLength} characters or fewer.`;
+			}
+			if (message) showFieldError(name, message);
+			else clearFieldError(name);
+			return !message;
+		};
+
+		['name', 'email', 'details'].forEach((name) => {
+			const field = fieldFor(name);
+			field?.addEventListener('blur', () => validateField(name));
+			field?.addEventListener(field instanceof HTMLSelectElement ? 'change' : 'input', () => {
+				if (field.getAttribute('aria-invalid') === 'true') validateField(name);
+			});
+		});
+
+		if (details && detailsCount) {
+			details.addEventListener('input', () => { detailsCount.textContent = `${details.value.length} / 3000`; });
+		}
+
+		contactForm.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			if (submitting) return;
+
+			const valid = ['name', 'email', 'details'].map(validateField).every(Boolean);
+			if (!valid) {
+				contactForm.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+				if (feedback) { feedback.textContent = 'Please correct the highlighted fields.'; feedback.className = 'form-feedback is-error'; }
+				return;
+			}
+
+			submitting = true;
+			if (submitButton) submitButton.disabled = true;
+			if (submitLabel) submitLabel.textContent = 'Sending…';
+			if (feedback) { feedback.textContent = ''; feedback.className = 'form-feedback'; }
+
+			const data = new FormData(contactForm);
+			try {
+				const response = await fetch('/api/contact', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(Object.fromEntries(data.entries())),
+				});
+				const result = await response.json().catch(() => ({ message: 'Your message could not be delivered. Please try again.' })) as { message?: string; errors?: Record<string, string> };
+
+				if (!response.ok) {
+					if (result.errors) Object.entries(result.errors).forEach(([name, message]) => showFieldError(name, message));
+					if (feedback) { feedback.textContent = result.message ?? 'Your message could not be delivered. Please try again.'; feedback.className = 'form-feedback is-error'; }
+					return;
+				}
+
+				contactForm.reset();
+				if (detailsCount) detailsCount.textContent = '0 / 3000';
+				['name', 'email', 'details'].forEach(clearFieldError);
+				if (feedback) { feedback.textContent = result.message ?? 'Thanks. Your project inquiry has been sent.'; feedback.className = 'form-feedback is-success'; }
+			} catch {
+				if (feedback) { feedback.textContent = 'Your message could not be delivered. Check your connection and try again.'; feedback.className = 'form-feedback is-error'; }
+			} finally {
+				submitting = false;
+				if (submitButton) submitButton.disabled = false;
+				if (submitLabel) submitLabel.textContent = 'Send project inquiry';
+			}
+		});
+	}
+</script>
