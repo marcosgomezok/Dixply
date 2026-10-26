@@ -125,7 +125,7 @@ const projects = [
 					<div class="form-heading"><span>Project inquiry</span><span class="form-status"><i></i> Send a request</span></div>
 					<div class="form-grid">
 						<div class="form-field"><label for="contact-name">Name <span aria-hidden="true">*</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="contact-name-error" /><p class="field-error" id="contact-name-error"></p></div>
-						<div class="form-field"><label for="contact-email">Work email <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="contact-email-error" /><p class="field-error" id="contact-email-error"></p></div>
+						<div class="form-field"><label for="contact-email">Email <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="contact-email-error" /><p class="field-error" id="contact-email-error"></p></div>
 						<div class="form-field form-field-full"><label for="contact-details">Project details <span aria-hidden="true">*</span></label><textarea id="contact-details" name="details" rows="4" maxlength="3000" required aria-describedby="contact-details-error contact-details-count"></textarea><div class="field-meta"><p class="field-error" id="contact-details-error"></p><span id="contact-details-count">0 / 3000</span></div></div>
 					</div>
 					<div class="honeypot" aria-hidden="true"><label for="contact-website">Website</label><input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off" /></div>
@@ -198,7 +198,7 @@ const projects = [
 
 			let message = '';
 			if (!field.validity.valid) {
-				if (field.validity.valueMissing) message = name === 'details' ? 'Tell us a little about your project.' : name === 'email' ? 'Enter your work email.' : 'Enter your name.';
+				if (field.validity.valueMissing) message = name === 'details' ? 'Tell us a little about your project.' : name === 'email' ? 'Enter your email.' : 'Enter your name.';
 				else if (field.validity.typeMismatch) message = 'Enter a valid email address.';
 				else if (field.validity.tooLong && !(field instanceof HTMLSelectElement)) message = `Use ${field.maxLength} characters or fewer.`;
 			}

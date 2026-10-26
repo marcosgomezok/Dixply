@@ -36,6 +36,20 @@ Add `BREVO_API_KEY` as a Secret in the Pages project's Settings > Environment va
 
 The contact endpoint is available at `/api/contact` and runs from `functions/api/contact.ts`.
 
+## Contact-form abuse protection
+
+The endpoint validates origin, request size, payload fields, honeypot input, malformed content, email syntax, and rate usage. Its in-process limiter is deliberately lightweight and local to each Worker instance; it does not replace Cloudflare's edge protection.
+
+For production abuse protection, add a Cloudflare Rate Limiting rule for requests matching:
+
+```text
+Host equals dixply.com
+URI Path equals /api/contact
+Method equals POST
+```
+
+Configure the threshold conservatively, for example 5 requests per 10 minutes per IP, with a managed challenge or block action. Cloudflare Web Application Firewall managed rules should also remain enabled for the zone.
+
 ## 🚀 Project Structure
 
 Inside of your Astro project, you'll see the following folders and files:

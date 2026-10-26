@@ -9,8 +9,10 @@ interface ContactPayload {
   website?: string;
 }
 
-const limits = { name: 100, email: 254, details: 3000 };
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const limits = { name: 100, email: 254, details: 3000, body: 16_384, website: 200 };
+const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+const suspiciousPattern = /(?:<script|javascript:|data:text\/html|(?:\b(?:select|insert|update|delete|drop|alter|create|truncate|exec|union)\b\s+(?:from|into|table|all)|(?:--|\/\*)))/i;
+const submissionWindows = new Map<string, number[]>();
 
 function jsonResponse(status: number, message: string, errors?: Record<string, string>) {
   return new Response(JSON.stringify({ message, ...(errors ? { errors } : {}) }), {
@@ -20,9 +22,36 @@ function jsonResponse(status: number, message: string, errors?: Record<string, s
 }
 
 function clean(value: unknown, maxLength: number): string {
-  return typeof value === 'string'
-    ? value.replace(/\u0000/g, '').replace(/\r/g, '').trim().slice(0, maxLength)
-    : '';
+  if (typeof value !== 'string') return '';
+  return value.replace(/[\u0000-\u001f\u007f]/g, '').replace(/\r/g, '').trim().slice(0, maxLength);
+}
+
+function isSameOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin');
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false;
+  }
+}
+
+function isRateLimited(request: Request): boolean {
+  const ip = request.headers.get('cf-connecting-ip')
+    ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    ?? 'unknown';
+  const now = Date.now();
+  const windowStart = now - 60 * 60 * 1000;
+  const recent = (submissionWindows.get(ip) ?? []).filter((timestamp) => timestamp > windowStart);
+
+  if (recent.length >= 5) {
+    submissionWindows.set(ip, recent);
+    return true;
+  }
+
+  recent.push(now);
+  submissionWindows.set(ip, recent);
+  return false;
 }
 
 function escapeHtml(value: string): string {
@@ -36,10 +65,24 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!contentType.toLowerCase().startsWith('application/json')) {
     return jsonResponse(415, 'Unsupported content type.');
   }
+  if (!isSameOrigin(request)) {
+    return jsonResponse(403, 'Request origin is not allowed.');
+  }
+  const contentLength = Number(request.headers.get('content-length') ?? 0);
+  if (Number.isFinite(contentLength) && contentLength > limits.body) {
+    return jsonResponse(413, 'Request is too large.');
+  }
+  if (isRateLimited(request)) {
+    return jsonResponse(429, 'Too many requests. Please wait before trying again.');
+  }
 
   let payload: Partial<ContactPayload>;
   try {
-    payload = await request.json() as Partial<ContactPayload>;
+    const body = await request.text();
+    if (new TextEncoder().encode(body).byteLength > limits.body) {
+      return jsonResponse(413, 'Request is too large.');
+    }
+    payload = JSON.parse(body) as Partial<ContactPayload>;
   } catch {
     return jsonResponse(400, 'The request body could not be read.');
   }
@@ -48,8 +91,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return jsonResponse(400, 'Invalid request body.');
   }
 
-  if (clean(payload.website, 200)) {
+  if (clean(payload.website, limits.website)) {
     return jsonResponse(200, 'Thanks. Your request has been received.');
+  }
+
+  const unexpectedFields = Object.keys(payload).filter((key) => !['name', 'email', 'details', 'website'].includes(key));
+  if (unexpectedFields.length) {
+    return jsonResponse(400, 'Invalid request fields.');
   }
 
   const name = clean(payload.name, limits.name);
@@ -60,6 +108,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!name) errors.name = 'Enter your name.';
   if (!email || !emailPattern.test(email)) errors.email = 'Enter a valid work email.';
   if (!details) errors.details = 'Tell us a little about your project.';
+  if (suspiciousPattern.test(name) || suspiciousPattern.test(details)) {
+    return jsonResponse(400, 'The request contains unsupported content.');
+  }
 
   if (Object.keys(errors).length) {
     return jsonResponse(422, 'Please correct the highlighted fields.', errors);
@@ -106,24 +157,19 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (!response.ok) {
       const providerBody = await response.text().catch(() => '');
       let providerCode = 'unknown';
-      let providerMessage = 'Brevo request rejected';
 
       try {
-        const providerError = JSON.parse(providerBody) as { code?: unknown; message?: unknown };
+        const providerError = JSON.parse(providerBody) as { code?: unknown };
         if (typeof providerError.code === 'string' || typeof providerError.code === 'number') {
           providerCode = String(providerError.code).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40) || 'unknown';
         }
-        if (typeof providerError.message === 'string') {
-          providerMessage = providerError.message.replace(/\s+/g, ' ').slice(0, 120);
-        }
       } catch {
-        providerMessage = 'Brevo returned an unreadable error response';
+        providerCode = 'unreadable';
       }
 
       console.error('Brevo contact delivery failed', {
         status: response.status,
         code: providerCode,
-        message: providerMessage,
       });
 
       return jsonResponse(502, 'Your message could not be delivered. Please try again or email hello@dixply.com.');

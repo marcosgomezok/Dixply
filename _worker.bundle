@@ -1,17 +1,19 @@
-------formdata-undici-001895317950
+------formdata-undici-043465233259
 Content-Disposition: form-data; name="metadata"
 
-{"main_module":"functionsWorker-0.6461179270068503.js"}
-------formdata-undici-001895317950
-Content-Disposition: form-data; name="functionsWorker-0.6461179270068503.js"; filename="functionsWorker-0.6461179270068503.js"
+{"main_module":"functionsWorker-0.8682057576700427.js"}
+------formdata-undici-043465233259
+Content-Disposition: form-data; name="functionsWorker-0.8682057576700427.js"; filename="functionsWorker-0.8682057576700427.js"
 Content-Type: application/javascript+module
 
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
 // api/contact.ts
-var limits = { name: 100, email: 254, details: 3e3 };
-var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var limits = { name: 100, email: 254, details: 3e3, body: 16384, website: 200 };
+var emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+var suspiciousPattern = /(?:<script|javascript:|data:text\/html|(?:\b(?:select|insert|update|delete|drop|alter|create|truncate|exec|union)\b\s+(?:from|into|table|all)|(?:--|\/\*)))/i;
+var submissionWindows = /* @__PURE__ */ new Map();
 function jsonResponse(status, message, errors) {
   return new Response(JSON.stringify({ message, ...errors ? { errors } : {} }), {
     status,
@@ -20,9 +22,34 @@ function jsonResponse(status, message, errors) {
 }
 __name(jsonResponse, "jsonResponse");
 function clean(value, maxLength) {
-  return typeof value === "string" ? value.replace(/\u0000/g, "").replace(/\r/g, "").trim().slice(0, maxLength) : "";
+  if (typeof value !== "string") return "";
+  return value.replace(/[\u0000-\u001f\u007f]/g, "").replace(/\r/g, "").trim().slice(0, maxLength);
 }
 __name(clean, "clean");
+function isSameOrigin(request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false;
+  }
+}
+__name(isSameOrigin, "isSameOrigin");
+function isRateLimited(request) {
+  const ip = request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const now = Date.now();
+  const windowStart = now - 60 * 60 * 1e3;
+  const recent = (submissionWindows.get(ip) ?? []).filter((timestamp) => timestamp > windowStart);
+  if (recent.length >= 5) {
+    submissionWindows.set(ip, recent);
+    return true;
+  }
+  recent.push(now);
+  submissionWindows.set(ip, recent);
+  return false;
+}
+__name(isRateLimited, "isRateLimited");
 function escapeHtml(value) {
   return value.replace(/[&<>'"]/g, (character) => ({
     "&": "&amp;",
@@ -38,17 +65,35 @@ var onRequestPost = /* @__PURE__ */ __name(async ({ request, env }) => {
   if (!contentType.toLowerCase().startsWith("application/json")) {
     return jsonResponse(415, "Unsupported content type.");
   }
+  if (!isSameOrigin(request)) {
+    return jsonResponse(403, "Request origin is not allowed.");
+  }
+  const contentLength = Number(request.headers.get("content-length") ?? 0);
+  if (Number.isFinite(contentLength) && contentLength > limits.body) {
+    return jsonResponse(413, "Request is too large.");
+  }
+  if (isRateLimited(request)) {
+    return jsonResponse(429, "Too many requests. Please wait before trying again.");
+  }
   let payload;
   try {
-    payload = await request.json();
+    const body = await request.text();
+    if (new TextEncoder().encode(body).byteLength > limits.body) {
+      return jsonResponse(413, "Request is too large.");
+    }
+    payload = JSON.parse(body);
   } catch {
     return jsonResponse(400, "The request body could not be read.");
   }
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     return jsonResponse(400, "Invalid request body.");
   }
-  if (clean(payload.website, 200)) {
+  if (clean(payload.website, limits.website)) {
     return jsonResponse(200, "Thanks. Your request has been received.");
+  }
+  const unexpectedFields = Object.keys(payload).filter((key) => !["name", "email", "details", "website"].includes(key));
+  if (unexpectedFields.length) {
+    return jsonResponse(400, "Invalid request fields.");
   }
   const name = clean(payload.name, limits.name);
   const email = clean(payload.email, limits.email).toLowerCase();
@@ -57,6 +102,9 @@ var onRequestPost = /* @__PURE__ */ __name(async ({ request, env }) => {
   if (!name) errors.name = "Enter your name.";
   if (!email || !emailPattern.test(email)) errors.email = "Enter a valid work email.";
   if (!details) errors.details = "Tell us a little about your project.";
+  if (suspiciousPattern.test(name) || suspiciousPattern.test(details)) {
+    return jsonResponse(400, "The request contains unsupported content.");
+  }
   if (Object.keys(errors).length) {
     return jsonResponse(422, "Please correct the highlighted fields.", errors);
   }
@@ -97,22 +145,17 @@ var onRequestPost = /* @__PURE__ */ __name(async ({ request, env }) => {
     if (!response.ok) {
       const providerBody = await response.text().catch(() => "");
       let providerCode = "unknown";
-      let providerMessage = "Brevo request rejected";
       try {
         const providerError = JSON.parse(providerBody);
         if (typeof providerError.code === "string" || typeof providerError.code === "number") {
           providerCode = String(providerError.code).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 40) || "unknown";
         }
-        if (typeof providerError.message === "string") {
-          providerMessage = providerError.message.replace(/\s+/g, " ").slice(0, 120);
-        }
       } catch {
-        providerMessage = "Brevo returned an unreadable error response";
+        providerCode = "unreadable";
       }
       console.error("Brevo contact delivery failed", {
         status: response.status,
-        code: providerCode,
-        message: providerMessage
+        code: providerCode
       });
       return jsonResponse(502, "Your message could not be delivered. Please try again or email hello@dixply.com.");
     }
@@ -126,7 +169,7 @@ var onRequestPost = /* @__PURE__ */ __name(async ({ request, env }) => {
 }, "onRequestPost");
 var onRequest = /* @__PURE__ */ __name(async () => jsonResponse(405, "Method not allowed."), "onRequest");
 
-// ../.wrangler/tmp/pages-p7ynM5/functionsRoutes-0.6235313286526305.mjs
+// ../.wrangler/tmp/pages-j2b2Pg/functionsRoutes-0.257732335438536.mjs
 var routes = [
   {
     routePath: "/api/contact",
@@ -593,4 +636,4 @@ export {
   pages_template_worker_default as default
 };
 
-------formdata-undici-001895317950--
+------formdata-undici-043465233259--
