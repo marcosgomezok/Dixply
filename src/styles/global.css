@@ -31,7 +31,7 @@ a:focus-visible, summary:focus-visible, button:focus-visible { outline: 3px soli
 .section-space { display: flex; min-height: 100vh; min-height: 100svh; align-items: center; padding-block: 88px; scroll-margin-top: 0; }
 .section-soft { background: #f7f8fa; }
 .brand-link { display: inline-flex; width: 152px; height: 44px; flex: 0 0 auto; align-items: center; overflow: hidden; }
-.brand-logo { display: block; width: 152px; height: 44px; object-fit: cover; object-position: center; }
+.brand-logo { display: block; width: 152px; height: 34px; object-fit: contain; object-position: center; }
 .nav-link { color: #d1d5db; font-size: .87rem; transition: color .18s ease; }
 .nav-link:hover { color: #fff; }
 .button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 16px; padding: 0 20px; border-radius: 5px; font-size: .88rem; font-weight: 600; transition: background .18s ease, transform .18s ease; }
