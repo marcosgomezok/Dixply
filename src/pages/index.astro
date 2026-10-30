@@ -5,19 +5,41 @@ import SocialLinks from '../components/SocialLinks.astro';
 import Layout from '../layouts/Layout.astro';
 
 const services = [
-	{ icon: 'web', title: 'Web & Software Development', description: 'Digital products built around how your business works.', tags: ['Business website design & development', 'Landing pages', 'Web applications', 'Custom software', 'Website maintenance & updates'] },
-	{ icon: 'automation', title: 'Automation & AI', description: 'Connected tools and workflows that simplify repetitive work.', tags: ['n8n workflow automation', 'WhatsApp AI agents', 'API integrations', 'Third-party app integrations', 'Business & administrative process automation'] },
-	{ icon: 'infrastructure', title: 'Hosting & Infrastructure', description: 'Practical setup and support for the systems your business relies on.', tags: ['Hosting & domain setup', 'Website & app deployment', 'VPS configuration', 'Technical service installation & maintenance', 'Infrastructure migration & configuration'] },
-	{ icon: 'security', title: 'Security & Quality Assurance', description: 'Technical reviews and testing to help prepare your systems for release.', tags: ['Web application security reviews', 'Authentication, authorization & validation reviews', 'Functional & regression testing', 'Manual QA', 'Bug reports & pre-launch checks'] },
-	{ icon: 'consulting', title: 'SEO & IT Consulting', description: 'Technical guidance to improve your website and make informed technology decisions.', tags: ['Technical SEO', 'On-page SEO optimization', 'Indexation diagnostics', 'Technology consulting', 'Systems, tools & integration evaluation'] },
+	{ icon: 'web', title: 'Web Development', description: 'Websites and software solutions tailored to your business.', tags: ['Corporate websites & landing pages', 'WordPress websites', 'Web applications', 'Custom software', 'Business management systems'] },
+	{ icon: 'automation', title: 'Automation & AI Solutions', description: 'Business process automation and intelligent solutions that save time.', tags: ['n8n workflow automation', 'AI agents for WhatsApp', 'Automated customer support', 'Business process automation', 'API integrations'] },
+	{ icon: 'infrastructure', title: 'Hosting & Infrastructure', description: 'Deployment and management of the infrastructure behind your digital services.', tags: ['Website hosting', 'Domain & DNS management', 'VPS deployment and management', 'SSL/TLS configuration', 'Server maintenance'] },
+	{ icon: 'security', title: 'Maintenance & Support', description: 'Ongoing technical maintenance and support for websites and applications.', tags: ['Website maintenance', 'Bug fixes', 'Content and software updates', 'Backups and monitoring', 'Technical support'] },
+	{ icon: 'consulting', title: 'SEO & Optimization', description: 'Technical improvements to boost website performance and search visibility.', tags: ['Technical SEO', 'Website speed optimization', 'Core Web Vitals', 'Search engine indexing', 'Metadata and structured data'] },
 ];
 
-const orbitServices = services.flatMap((service) => service.tags);
+const orbitServices = services.slice(0, 3).flatMap((service) => service.tags);
 
 const projects = [
-	{ name: 'BrightNest Cleaning', category: 'Residential & commercial cleaning', description: 'A service-led website concept designed to make cleaning options clear and quote requests easy to find.', initials: 'BN', tone: 'mint', type: 'Local services' },
-	{ name: 'Form & Flow Studio', category: 'Fitness & movement studio', description: 'A welcoming concept for presenting classes, sample schedules, and ways to ask about membership.', initials: 'F&F', tone: 'sand', type: 'Fitness' },
-	{ name: 'Atelier North', category: 'Interior design studio', description: 'A visual portfolio concept for sharing selected interiors, project stories, and inquiry details.', initials: 'AN', tone: 'clay', type: 'Interior design' },
+	// Replace null with an optimized WebP screenshot when an approved preview is available.
+	{
+		name: 'Corporate Website',
+		category: 'Web Development',
+		description: 'A professional, responsive business website featuring structured service pages, company information, contact functionality, and search-friendly architecture.',
+		url: 'https://corporate-web-dixply.netlify.app/',
+		previewImage: null,
+		previewType: 'corporate',
+	},
+	{
+		name: 'Business Management System',
+		category: 'Web Applications',
+		description: 'An interactive business management application featuring operational dashboards, inventory management, sales tracking, customer records, and data visualization.',
+		url: 'https://business-management-dixply.netlify.app/',
+		previewImage: null,
+		previewType: 'management',
+	},
+	{
+		name: 'AI-Powered Customer Support',
+		category: 'Automation & AI Solutions',
+		description: 'An interactive customer support demonstration featuring conversational interfaces, automated response flows, quick replies, and simulated customer interactions.',
+		url: 'https://ai-support-dixply.netlify.app/',
+		previewImage: null,
+		previewType: 'support',
+	},
 ];
 
 ---
@@ -67,9 +89,12 @@ const projects = [
 
 		<section class="section-space bg-white" id="services">
 			<div class="site-shell">
-				<div class="section-heading grid gap-6 md:grid-cols-[.85fr_1.15fr] md:items-end">
-					<div><p class="eyebrow"><span class="eyebrow-mark"></span> What we do</p><h2>Technology that<br class="hidden sm:block" /> moves work forward.</h2></div>
-					<p class="section-intro">From a first business website to the systems behind your daily operations, get practical technical support shaped around your business.</p>
+				<div class="section-heading section-heading-group">
+					<p class="eyebrow"><span class="eyebrow-mark"></span> What we do</p>
+					<div class="split-heading grid gap-6 md:grid-cols-2">
+						<h2>Technology that<br />moves work forward.</h2>
+						<p class="section-intro">From a first business website to the systems behind your daily operations, get practical technical support shaped around your business.</p>
+					</div>
 				</div>
 				<div class="service-list">
 					{services.map((service) => (
@@ -87,9 +112,12 @@ const projects = [
 
 		<section class="section-space section-soft" id="about">
 			<div class="site-shell">
-				<div class="section-heading grid gap-6 md:grid-cols-[.85fr_1.15fr] md:items-end">
-					<div><p class="eyebrow"><span class="eyebrow-mark"></span> About Dixply</p><h2>Technology built around<br />what matters.</h2></div>
-					<p class="section-intro">We pair thoughtful security practices with focused delivery and budget-conscious decisions, so each solution fits your business from the start.</p>
+				<div class="section-heading section-heading-group">
+					<p class="eyebrow"><span class="eyebrow-mark"></span> About Dixply</p>
+					<div class="split-heading grid gap-6 md:grid-cols-2">
+						<h2>Technology built around<br />what matters.</h2>
+						<p class="section-intro">We pair thoughtful security practices with focused delivery and budget-conscious decisions, so each solution fits your business from the start.</p>
+					</div>
 				</div>
 				<div class="benefit-grid grid gap-4 md:grid-cols-3">
 					<article class="benefit-card"><div class="benefit-heading"><span class="benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 19 6v5c0 4.7-2.9 8-7 10-4.1-2-7-5.3-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><h3>Security You Can Trust</h3></div><p>We build security into every stage of development, applying best practices to protect your data, reduce vulnerabilities, and keep your systems secure from the ground up.</p></article>
@@ -101,17 +129,35 @@ const projects = [
 
 		<section class="section-space bg-white" id="work">
 			<div class="site-shell">
-				<div class="section-heading portfolio-heading flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-					<div><p class="eyebrow"><span class="eyebrow-mark"></span> Concept work</p><h2>Ideas, brought to life.</h2></div>
+				<div class="section-heading section-heading-group">
+					<p class="eyebrow"><span class="eyebrow-mark"></span> INTERACTIVE SHOWCASE</p>
+					<div class="split-heading portfolio-heading grid gap-6 md:grid-cols-2">
+						<h2><span class="portfolio-title-gradient">Digital Solutions</span><br />in Action.</h2>
+						<p class="portfolio-note">Explore practical digital solutions for real business needs, from corporate websites and management systems to intelligent customer support workflows.</p>
+					</div>
 				</div>
 				<div class="project-grid grid gap-5 lg:grid-cols-3">
 					{projects.map((project) => (
 						<article class="project-card">
-							<div class={`project-art project-${project.tone}`} aria-hidden="true">
-								<div class="project-window"><div class="window-top"><span></span><span></span><span></span><i>{project.type}</i></div><div class="window-content"><div class="window-copy"><b>{project.initials}</b><span></span><span></span><small></small></div><div class="window-shape"><span>{project.initials}</span></div></div></div>
-								<div class="concept-stamp">Concept<br />project</div>
+							<a class={`project-preview project-preview-${project.previewType}`} href={project.url} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.name} demo in a new tab`}>
+								{project.previewImage ? (
+									<img src={project.previewImage} alt={`Screenshot of the ${project.name} demo`} loading="lazy" />
+								) : (
+									<div class="project-placeholder" aria-hidden="true">
+										<svg viewBox="0 0 48 48" fill="none">
+											{project.previewType === 'corporate' && <g><rect x="8" y="9" width="32" height="30" rx="3" /><path d="M8 17h32M15 13h.01M19 13h.01M15 23h10M15 28h18M15 33h13" /></g>}
+											{project.previewType === 'management' && <g><rect x="7" y="8" width="34" height="32" rx="3" /><path d="M7 17h34M13 13h.01M17 13h.01M14 33v-6m8 6V22m8 11v-9m-17-2h4m4-4h5m5 3h4" /></g>}
+											{project.previewType === 'support' && <g><path d="M9 10a4 4 0 0 1 4-4h22a4 4 0 0 1 4 4v20a4 4 0 0 1-4 4H21l-9 7v-7a4 4 0 0 1-3-4V10Z" /><path d="M16 17h16m-16 7h11" /></g>}
+										</svg>
+									</div>
+								)}
+								<span class="demo-stamp"><i aria-hidden="true"></i> LIVE DEMO</span>
+							</a>
+							<div class="project-info">
+								<div class="project-title-line"><div><p class="project-category">{project.category}</p><h3>{project.name}</h3></div></div>
+								<p>{project.description}</p>
+								<a class="project-demo-link" href={project.url} target="_blank" rel="noopener noreferrer">View Demo <span aria-hidden="true">↗</span></a>
 							</div>
-							<div class="project-info"><div class="project-title-line"><div><p class="project-category">{project.category}</p><h3>{project.name}</h3></div><span class="project-mark" aria-hidden="true">↗</span></div><p>{project.description}</p></div>
 						</article>
 					))}
 				</div>
@@ -124,9 +170,9 @@ const projects = [
 				<form class="contact-form" id="contact-form" novalidate>
 					<div class="form-heading"><span>Project inquiry</span><span class="form-status"><i></i> Send a request</span></div>
 					<div class="form-grid">
-						<div class="form-field"><label for="contact-name">Name <span aria-hidden="true">*</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="contact-name-error" /><p class="field-error" id="contact-name-error"></p></div>
-						<div class="form-field"><label for="contact-email">Email <span aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="contact-email-error" /><p class="field-error" id="contact-email-error"></p></div>
-						<div class="form-field form-field-full"><label for="contact-details">Project details <span aria-hidden="true">*</span></label><textarea id="contact-details" name="details" rows="4" maxlength="3000" required aria-describedby="contact-details-error contact-details-count"></textarea><div class="field-meta"><p class="field-error" id="contact-details-error"></p><span id="contact-details-count">0 / 3000</span></div></div>
+						<div class="form-field"><label for="contact-name">Name <span class="required-mark" aria-hidden="true">*</span></label><input id="contact-name" name="name" type="text" autocomplete="name" maxlength="100" required aria-describedby="contact-name-error" /><p class="field-error" id="contact-name-error"></p></div>
+						<div class="form-field"><label for="contact-email">Email <span class="required-mark" aria-hidden="true">*</span></label><input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254" required aria-describedby="contact-email-error" /><p class="field-error" id="contact-email-error"></p></div>
+						<div class="form-field form-field-full"><label for="contact-details">Project details <span class="required-mark" aria-hidden="true">*</span></label><textarea id="contact-details" name="details" rows="4" maxlength="3000" required aria-describedby="contact-details-error contact-details-count"></textarea><div class="field-meta"><p class="field-error" id="contact-details-error"></p><span id="contact-details-count">0 / 3000</span></div></div>
 					</div>
 					<div class="honeypot" aria-hidden="true"><label for="contact-website">Website</label><input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off" /></div>
 					<div class="form-feedback" id="contact-feedback" role="status" aria-live="polite"></div>
